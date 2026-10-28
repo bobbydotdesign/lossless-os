@@ -1,0 +1,6 @@
+build/
+*.bmp
+.DS_Store
+out/
+lib/lbt/test/traces/*.pklg
+sim/shots/

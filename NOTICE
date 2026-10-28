@@ -1,0 +1,70 @@
+Lossless OS
+Copyright 2026 Lossless
+
+Licensed under the Apache License, Version 2.0 (LICENSE). Unless stated
+otherwise below, every file in this repository is ours, under that licence.
+
+Written clean-room: no code from other firmware for these players, Linux,
+or the players' original firmware. Hardware facts learned from them are
+recorded in docs/h2-hardware.md, and the code was written from those facts.
+
+
+Third-party parts in this repository
+------------------------------------
+
+lib/lbt/sbc/
+    The SBC encoder and decoder from Android (Broadcom / Open Interface),
+    as shipped in Zephyr's libsbc module.
+    Apache License, Version 2.0 (lib/lbt/sbc/LICENSE).
+
+lib/opus/
+    libopus 1.5.2, the decoder's files, unchanged, built in fixed point.
+    Copyright 2001-2023 Xiph.Org, Skype Limited, Octasic, Jean-Marc Valin,
+    Timothy B. Terriberry, CSIRO, Gregory Maxwell, Mark Borgerding,
+    Erik de Castro Lopo, Mozilla, Amazon.
+    BSD 3-Clause License (lib/opus/COPYING).
+
+lib/pvmp3/
+    Android's MP3 decoder (PacketVideo), from AOSP frameworks/av,
+    media/module/codecs/mp3dec, the files unchanged but build_config.h.
+    Copyright 2005-2008 The Android Open Source Project.
+    Apache License, Version 2.0 (lib/pvmp3/NOTICE). MP3's patents have
+    expired; see lib/pvmp3/patent_disclaimer.txt for Google's note.
+
+lib/tremor/
+    Tremor (libvorbisidec), Xiph.Org's fixed-point Vorbis decoder, git
+    820fb3237ea81af44c9cc468c8b4e20128e3e5ad, the decoder's files, unchanged.
+    Copyright 2002 Xiph.org Foundation. BSD 3-Clause License (lib/tremor/COPYING).
+
+lib/ogg/
+    libogg 1.3.5's bit reader (src/bitwise.c) and headers, unchanged, but
+    include/ogg/config_types.h, filled in by hand from its template.
+    Copyright 2002 Xiph.org Foundation. BSD 3-Clause License (lib/ogg/COPYING).
+
+assets/fonts/GeistMono-*.ttf, assets/fonts/Geist-*.ttf
+    Geist and Geist Mono. Copyright 2024 The Geist Project Authors;
+    Copyright 2023 Vercel, in collaboration with basement.studio.
+    SIL Open Font License, Version 1.1 (assets/fonts/OFL-Geist.txt).
+
+assets/fonts/NotoSansCJK-Hangul.otf
+    Noto Sans CJK JP Regular 1.002, cut down to Korean (Hangul syllables
+    and letters, CJK punctuation, full-width forms; see
+    assets/fonts/README.md). Copyright 2014, 2015 Adobe Systems Incorporated.
+    SIL Open Font License, Version 1.1 (assets/fonts/OFL-Noto.txt).
+
+
+Used at build time, not included here
+-------------------------------------
+
+Zephyr RTOS         Apache License, Version 2.0   https://zephyrproject.org
+LVGL                MIT License                   https://lvgl.io
+FatFs               FatFs licence (BSD-style)     http://elm-chan.org/fsw/ff/
+SDL2 (simulator)    zlib License                  https://libsdl.org
+
+
+Not included, and not ours to include
+-------------------------------------
+
+The Bluetooth chip's firmware patch (BCM4343A1.hcd, Cypress / Infineon) is
+not part of Lossless OS. The player loads it from its own card, where it
+comes from the player's original firmware (docs/h2-hardware.md, "Bluetooth").

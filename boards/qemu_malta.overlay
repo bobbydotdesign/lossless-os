@@ -1,0 +1,21 @@
+/*
+ * The emulated MIPS board, set up like a player: 16 MB of memory (the
+ * board defaults to 1 MB) and a 320 x 240 display that draws nowhere.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+&sram0 {
+	reg = <0x80200000 0x1000000>;
+};
+
+/ {
+	chosen {
+		zephyr,display = &dummy_dc;
+	};
+
+	dummy_dc: dummy_dc {
+		compatible = "zephyr,dummy-dc";
+		height = <240>;
+		width = <320>;
+	};
+};

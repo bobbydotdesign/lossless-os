@@ -1,0 +1,15 @@
+# Lossless OS drivers for the X1000 (out of Zephyr's tree)
+# SPDX-License-Identifier: Apache-2.0
+
+config SDHC_X1000
+	bool "Ingenic X1000 MSC SD host controller"
+	default y
+	depends on DT_HAS_INGENIC_X1000_MSC_ENABLED
+	depends on SDHC
+	select SDHC_SUPPORTS_NATIVE_MODE
+
+config DISPLAY_HANDOVER_FB
+	bool "Screen handed over by the bootloader"
+	default y
+	depends on DT_HAS_LOSSLESS_HANDOVER_FRAMEBUFFER_ENABLED
+	depends on DISPLAY

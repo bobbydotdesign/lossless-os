@@ -1,0 +1,8 @@
+# HiFi Walker H2, started by its bootloader (as a uImage, or from the card at power-on)
+# (docs/h2-hardware.md). System timer: the X1000's OS timer. No console or
+# serial drivers yet.
+# SPDX-License-Identifier: Apache-2.0
+CONFIG_CONSOLE=n
+CONFIG_UART_CONSOLE=n
+CONFIG_SERIAL=n
+CONFIG_BUILD_OUTPUT_BIN=y

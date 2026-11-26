@@ -1,0 +1,8 @@
+# Ingenic X1000 (HiFi Walker H2, Eros Q and relatives)
+# SPDX-License-Identifier: Apache-2.0
+
+config SOC_X1000
+	bool
+
+config SOC
+	default "x1000" if SOC_X1000

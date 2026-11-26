@@ -1,0 +1,96 @@
+# Builds Lossless OS and its bootloader for the H2 on every push (so a broken build shows up
+# early), and on a version tag (v1.0, v1.0.1, ...) makes the release: the
+# zip people download and its manifest.json, attached to a GitHub release.
+#
+# SPDX-License-Identifier: Apache-2.0
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write     # the release
+
+env:
+  ZEPHYR_VERSION: v4.4.2
+  SDK_VERSION: 1.0.1
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: os
+
+      - name: Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ninja-build device-tree-compiler xz-utils zip xorriso
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zephyr (cached)
+        id: zephyr
+        uses: actions/cache@v4
+        with:
+          path: |
+            zephyr-ws
+            ~/zephyr-sdk-${{ env.SDK_VERSION }}
+          key: zephyr-${{ env.ZEPHYR_VERSION }}-sdk-${{ env.SDK_VERSION }}-1
+
+      - name: Zephyr and its SDK (MIPS only)
+        if: steps.zephyr.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 --branch "$ZEPHYR_VERSION" https://github.com/zephyrproject-rtos/zephyr zephyr-ws/zephyr
+          python -m venv zephyr-ws/.venv
+          . zephyr-ws/.venv/bin/activate
+          pip install west -r zephyr-ws/zephyr/scripts/requirements-base.txt
+          cd zephyr-ws
+          west init -l zephyr
+          west config manifest.project-filter -- '-.*,+lvgl,+fatfs'
+          west update --narrow -o=--depth=1
+          cd ~
+          base=https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v$SDK_VERSION
+          curl -sSfL "$base/zephyr-sdk-${SDK_VERSION}_linux-x86_64_minimal.tar.xz" | tar xJ
+          mkdir -p "zephyr-sdk-$SDK_VERSION/gnu"
+          curl -sSfL "$base/toolchain_gnu_linux-x86_64_mips-zephyr-elf.tar.xz" | tar xJ -C "zephyr-sdk-$SDK_VERSION/gnu"
+
+      - name: Register the SDK
+        run: ~/zephyr-sdk-$SDK_VERSION/setup.sh -c
+
+      - name: Build
+        working-directory: os
+        run: |
+          . ../zephyr-ws/.venv/bin/activate
+          export ZEPHYR_BASE=$PWD/../zephyr-ws/zephyr
+          west build -b hifiwalker_h2 . -d build/h2
+          python tools/mklosboot.py build/h2/zephyr/zephyr.elf build/h2/zephyr/zephyr.bin out/lossless.bin
+          make -C boot all rescue SDK=$HOME/zephyr-sdk-$SDK_VERSION
+
+      - name: Package
+        working-directory: os
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          case "$GITHUB_REF" in refs/tags/v*) ;; *) version="dev-${GITHUB_SHA::7}" ;; esac
+          python tools/mkrelease.py "$version"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lossless-os-h2
+          path: |
+            os/out/release/*.zip
+            os/out/release/manifest.json
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: os
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" out/release/*.zip out/release/manifest.json --title "Lossless OS ${GITHUB_REF_NAME#v}" --notes-file out/release/NOTES.md

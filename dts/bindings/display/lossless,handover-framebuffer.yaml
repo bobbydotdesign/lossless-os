@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  A screen the bootloader left running: the LCD controller keeps sending a
+  frame from memory to the panel, and the driver draws into that frame.
+  Found at start-up by following the controller's DMA descriptors.
+
+compatible: "lossless,handover-framebuffer"
+
+include: display-controller.yaml
+
+properties:
+  reg:
+    required: true
+    description: The LCD controller's registers

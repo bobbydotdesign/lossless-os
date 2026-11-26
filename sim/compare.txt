@@ -1,0 +1,43 @@
+# Home, Music, Albums, an album, play, Now Playing, the lock screen, Albums (mini player), Artists, Settings
+wait 300
+dump
+key enter
+wait 200
+dump
+key enter
+wait 600
+dump
+key down 3
+key enter
+wait 600
+dump
+key enter
+wait 3200
+dump
+key lock
+wait 500
+dump
+key lock
+wait 300
+key back
+wait 300
+key back
+wait 400
+dump
+key back
+wait 200
+key down
+key enter
+wait 300
+dump
+key back
+wait 200
+key back
+wait 200
+wait 300
+key down 3
+wait 300
+key enter
+wait 800
+dump
+quit

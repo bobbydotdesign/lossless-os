@@ -1,0 +1,18 @@
+# A Lossless OS theme. Copy this file to the card as /Themes/Your Name.txt,
+# change the colours, then pick it in Settings > Themes.
+# Leave a line out and it keeps Graphite's colour (Aluminium's if dark = no).
+# docs/themes.md says what each colour paints.
+
+dark = yes
+
+bg        = #121212   # the background
+fg        = #EEECE7   # text
+muted     = #A3A099   # second lines, the hint under Settings
+faint     = #8D8A83   # small print
+line      = #2C2B29   # lines between rows, bar tracks
+raised    = #1E1E1C   # chips and the options menu
+accent    = #FF6326   # the playing bar, lamps, the dot by the format
+accentInk = #FF7A45   # the dot-matrix times and clock
+accentFg  = #141414   # text on the accent
+lcd       = #0A0A0A   # behind the dot-matrix times
+lcdDim    = #8A5A44   # time left (dark themes)

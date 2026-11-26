@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_HIFIWALKER_H2
+	select SOC_X1000

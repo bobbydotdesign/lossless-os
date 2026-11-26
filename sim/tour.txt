@@ -1,0 +1,28 @@
+# Home, Music, Albums, an album, play, Now Playing, back to Albums (mini player), Artists
+wait 300
+dump
+key enter
+wait 200
+dump
+key enter
+wait 600
+dump
+key down 3
+key enter
+wait 600
+dump
+key enter
+wait 3200
+dump
+key back
+wait 300
+key back
+wait 400
+dump
+key back
+wait 200
+key down
+key enter
+wait 300
+dump
+quit

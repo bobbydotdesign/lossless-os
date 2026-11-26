@@ -1,0 +1,11 @@
+build/
+*.bmp
+.DS_Store
+out/
+lib/lbt/test/traces/*.pklg
+sim/shots/
+
+# Built tools and boot tests
+tools/h2-usb/h2-usb
+boot/test/*.elf
+boot/test/*.bin

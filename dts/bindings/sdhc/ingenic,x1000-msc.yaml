@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+
+description: Ingenic X1000 MSC, the SD/MMC host controller
+
+compatible: "ingenic,x1000-msc"
+
+include: [sdhc.yaml]
+
+properties:
+  reg:
+    required: true

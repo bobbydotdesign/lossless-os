@@ -1,0 +1,7 @@
+wait 300
+key down 4
+wait 300
+key enter
+wait 800
+dump
+quit

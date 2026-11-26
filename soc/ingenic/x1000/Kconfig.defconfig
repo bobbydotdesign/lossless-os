@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+
+if SOC_X1000
+
+# The system timer is the OS timer (ost_timer.c): cycles count the 24 MHz
+# crystal / 4, and a periodic tick (no tickless mode yet).
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 6000000
+
+config SYS_CLOCK_TICKS_PER_SEC
+	default 1000
+
+config NUM_IRQS
+	default 8
+
+endif

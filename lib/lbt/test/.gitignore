@@ -1,0 +1,14 @@
+# built by make
+test_hci
+test_l2cap
+test_gap
+test_sdp
+test_avdtp
+test_sbc
+test_avrcp
+test_coverart
+test_replay
+test_source
+*.dSYM
+libsbc.a
+sbc-obj/

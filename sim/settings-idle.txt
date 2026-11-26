@@ -1,0 +1,52 @@
+# Settings > Battery > Switch off when idle through its steps, then the sleep timer
+wait 300
+key down
+wait 250
+key down
+wait 250
+key down
+wait 250
+key enter
+wait 250
+wait 400
+key down
+wait 250
+key down
+wait 250
+key down
+wait 250
+key enter
+wait 250
+wait 300
+key down
+wait 250
+dump
+key enter
+wait 250
+dump
+key enter
+wait 250
+dump
+key enter
+wait 250
+dump
+key enter
+wait 250
+dump
+key enter
+wait 250
+dump
+key back
+wait 250
+key down
+wait 250
+key down
+wait 250
+key down
+wait 250
+key enter
+wait 250
+wait 300
+dump
+wait 3000
+quit

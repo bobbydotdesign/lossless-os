@@ -1,0 +1,6 @@
+board:
+  name: hifiwalker_h2
+  full_name: HiFi Walker H2
+  vendor: hifiwalker
+  socs:
+  - name: x1000

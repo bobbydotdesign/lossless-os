@@ -1,0 +1,72 @@
+/*
+ * HiFi Walker H2 (Ingenic X1000, 32 MB).
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/dts-v1/;
+
+#include "skeleton.dtsi"
+
+/ {
+	model = "HiFi Walker H2";
+	compatible = "hifiwalker,h2";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,display = &screen;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "ingenic,xburst";
+			reg = <0>;
+
+			cpu_intc: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "mti,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+
+	/*
+	 * The upper 16 MB of the 32. The lower half stays with the bootloader
+	 * that started us: its exception handlers, screen buffer and heap.
+	 */
+	sram0: memory@81000000 {
+		device_type = "memory";
+		compatible = "mmio-sram";
+		reg = <0x81000000 0x1000000>;
+	};
+
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges;
+
+		/* LCD controller; for now its frame as the bootloader set it up */
+		screen: lcd@13050000 {
+			compatible = "lossless,handover-framebuffer";
+			reg = <0x13050000 0x1000>;
+			width = <320>;
+			height = <240>;
+		};
+
+		/* SD card slot: MSC0 */
+		sdhc0: sdhc@13450000 {
+			compatible = "ingenic,x1000-msc";
+			reg = <0x13450000 0x10000>;
+			max-bus-freq = <50000000>;
+			min-bus-freq = <400000>;
+
+			sdmmc {
+				compatible = "zephyr,sdmmc-disk";
+				disk-name = "SD";
+			};
+		};
+	};
+};

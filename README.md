@@ -12,7 +12,12 @@ project that I'm proud of and want to share.
 I'll never charge for it, so feel free to use it for as long as you want.
 I'll provide updates periodically if I find other ways to improve it.
 
-<!-- Screenshots go here: home, an album, Now Playing, the lock screen. -->
+<p>
+<img src="docs/images/home.png" width="380" alt="Home">
+<img src="docs/images/album.png" width="380" alt="An album">
+<img src="docs/images/now-playing.png" width="380" alt="Now Playing">
+<img src="docs/images/lock.png" width="380" alt="The lock screen">
+</p>
 
 > [!WARNING]
 > **Proceed at your own risk.** Installing Lossless OS replaces your
@@ -78,6 +83,15 @@ the chip has a rescue mode that can't be erased:
   Backlight, an old green LCD; and Classic, a nod to the iPod classic.
   Making your own is one small text file; [docs/themes.md](docs/themes.md)
   shows how.
+
+<p>
+<img src="docs/images/theme-gallery-albums.png" width="380" alt="Gallery: albums">
+<img src="docs/images/theme-gallery.png" width="380" alt="Gallery: Now Playing">
+<img src="docs/images/theme-backlight.png" width="380" alt="Backlight: Now Playing">
+<img src="docs/images/theme-classic.png" width="380" alt="Classic: Now Playing">
+</p>
+
+The screenshots come from the simulator, with made-up albums.
 
 ## Join in
 

@@ -48,7 +48,7 @@ on GitHub do the work.
 
 ## The repository
 
-- [ ] Publish from a fresh repository made from a clean tree, not this
+- [x] Publish from a fresh repository made from a clean tree, not this
       history: early commits contain simulator screenshots with album art
       and a Bluetooth trace's device addresses.
 - [ ] No pairing keys, logs or recordings: `lib/lbt/test/traces/*.pklg`
@@ -56,7 +56,7 @@ on GitHub do the work.
 - [ ] Licences: LICENSE (Apache-2.0), NOTICE, `lib/lbt/sbc/LICENSE`,
       `assets/fonts/OFL-*.txt`. Check the Noto subset against the OFL's
       rules for modified fonts (it keeps no reserved name).
-- [ ] The Bluetooth firmware patch is not included: the player copies its
+- [x] The Bluetooth firmware patch is not included: the player copies its
       own from its original firmware (`app/stockfw.c`), and install.md
       says where to get one by hand.
 - [ ] README: hardware list, install and the way back are current.

@@ -617,8 +617,17 @@ static void note_skipped(const char *artist, const char *album, int songs, const
     k->whole = whole;
 }
 
+static void (*progress)(int albums);
+
+void library_set_progress(void (*fn)(int albums))
+{
+    progress = fn;
+}
+
 static void scan_album(const char *artist, const char *path, const char *name)
 {
+    if (progress)
+        progress(nalbums);
     if (nalbums >= LIB_MAX_ALBUMS) {
         note_skipped(artist, name, 1, "FULL", true);
         return;

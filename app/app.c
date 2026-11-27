@@ -1164,12 +1164,98 @@ static void collect_artists(void)
         }
 }
 
+/* While the library is read: the mark, what it's doing and the albums so
+ * far, over everything. At start only once it takes a moment (a read from
+ * the cache is quick); after USB or Rescan at once. */
+static struct {
+    const char *text;
+    lv_obj_t *box, *count;
+    uint32_t t0, drawn;
+} scan_ui;
+
+static void scan_ui_show(void)
+{
+    scan_ui.box = lv_obj_create(lv_layer_top());
+    lv_obj_remove_style_all(scan_ui.box);
+    lv_obj_set_size(scan_ui.box, LOS_W, LOS_H);
+    /* the mark's colours are the title bar's: on its colour where it has one */
+    bool fill = theme.header_fill;
+    lv_obj_set_style_bg_color(scan_ui.box, fill ? theme.header_bg : theme.bg, 0);
+    lv_obj_set_style_bg_opa(scan_ui.box, LV_OPA_COVER, 0);
+    lv_obj_t *m = mark_create(scan_ui.box, 5);
+    lv_obj_align(m, LV_ALIGN_CENTER, 0, -34);
+    lv_obj_t *t = theme_tag(scan_ui.box, scan_ui.text, fill ? theme.header_fg : theme.fg);
+    lv_obj_align(t, LV_ALIGN_CENTER, 0, 6);
+    scan_ui.count = lv_label_create(scan_ui.box);
+    lv_label_set_text(scan_ui.count, "");
+    lv_obj_set_style_text_font(scan_ui.count, theme.small, 0);
+    lv_obj_set_style_text_color(scan_ui.count, fill ? theme.header_muted : theme.muted, 0);
+    lv_obj_set_style_text_align(scan_ui.count, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_width(scan_ui.count, LOS_W);
+    lv_obj_align(scan_ui.count, LV_ALIGN_CENTER, 0, 30);
+}
+
+static void scan_progress(int albums)
+{
+    if (!scan_ui.box) {
+        if (lv_tick_elaps(scan_ui.t0) < 400)
+            return;
+        scan_ui_show();
+    } else if (lv_tick_elaps(scan_ui.drawn) < 200) {
+        return;
+    }
+    if (albums)
+        lv_label_set_text_fmt(scan_ui.count, "%d album%s", albums, albums == 1 ? "" : "s");
+    lv_refr_now(NULL);
+    scan_ui.drawn = lv_tick_get();
+}
+
+static void scan_begin(const char *text, bool at_once)
+{
+    scan_ui.text = text;
+    scan_ui.t0 = lv_tick_get();
+    library_set_progress(scan_progress);
+    if (at_once) {
+        scan_ui_show();
+        lv_refr_now(NULL);
+        scan_ui.drawn = lv_tick_get();
+    }
+}
+
+static void scan_end(void)
+{
+    library_set_progress(NULL);
+    if (scan_ui.box)
+        lv_obj_delete(scan_ui.box);
+    scan_ui.box = NULL;
+}
+
+/* An empty library's lists say why they're empty, and what to do */
+static void no_music_note(void)
+{
+    bool skipped = library_skipped() > 0;
+    lv_obj_t *t = theme_tag(screen_obj, skipped ? "Nothing it can play" : "No music yet",
+                            theme.muted);
+    lv_obj_align(t, LV_ALIGN_CENTER, 0, LOS_HEADER_H / 2 - 12);
+    lv_obj_t *h = lv_label_create(screen_obj);
+    lv_label_set_text(h, skipped ? "The Couldn't add list says why."
+                                 : "Copy albums to the card\nfrom your computer.");
+    lv_obj_set_style_text_font(h, theme.small, 0);
+    lv_obj_set_style_text_color(h, theme.faint, 0);
+    lv_obj_set_style_text_align(h, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_align_to(h, t, LV_ALIGN_OUT_BOTTOM_MID, 0, 8);
+}
+
 /* album indexes shown by the current Albums screen */
 static int shown_albums[LIB_MAX_ALBUMS];
 
 static void build_albums(int artist)
 {
     header = header_create(screen_obj, artist >= 0 ? artist_names[artist] : "Albums");
+    if (!library_albums()) {
+        no_music_note();
+        return;
+    }
     list_begin();
     if (artist >= 0) {
         /* an artist's page starts with all their songs, like an iPod */
@@ -1199,6 +1285,10 @@ static void build_albums(int artist)
 static void build_artists(void)
 {
     header = header_create(screen_obj, "Artists");
+    if (!library_albums()) {
+        no_music_note();
+        return;
+    }
     list_begin();
     for (int i = 0; i < nartists; i++) {
         text_row(artist_names[i], NULL);
@@ -1330,6 +1420,10 @@ static void build_songs(void)
         lv_obj_set_pos(songs_letter, LOS_W - 92, LOS_HEADER_H + 6);
     }
     nsongs = collect_all_songs(song_index);
+    if (!nsongs) {
+        no_music_note();
+        return;
+    }
     songs_list(true);
 }
 
@@ -2879,6 +2973,10 @@ static void build_covers(void)
     if (kind == SHELF_PLAYLISTS)
         pl_pics_forget();                     /* playlists may have changed */
     int n = shelf_count(kind);
+    if (!n && kind != SHELF_PLAYLISTS && !library_albums()) {
+        no_music_note();
+        return;
+    }
     if (!n) {
         static const char *const none[] = { "No albums", "No artists", "No playlists", "No albums" };
         lv_obj_t *t = theme_tag(screen_obj, none[kind], theme.muted);
@@ -4641,9 +4739,7 @@ static void usb_watch(void)
         usb_away = false;
         usb_done = u != LOS_USB_NONE;
         test_start_if_requested();
-        lv_obj_t *t = theme_tag(lv_layer_top(), "Reading the card...", theme.fg);
-        lv_obj_center(t);
-        lv_refr_now(NULL);
+        scan_begin("Reading the card...", true);
         player.album = -1;
         player.state = 0;
         queue_len = 0;
@@ -4653,7 +4749,7 @@ static void usb_watch(void)
         fav_reload();
         load_resume();
         write_player_json();
-        lv_obj_delete(t);
+        scan_end();
         if (usb_scr)
             lv_obj_delete(usb_scr);
         usb_scr = NULL;
@@ -5224,9 +5320,7 @@ static void settings_choose(int r)
         return;
     case SR_RESCAN: {
         /* every file read again; what was playing stops (the list changes) */
-        lv_obj_t *t = theme_tag(lv_layer_top(), "Scanning the library...", theme.fg);
-        lv_obj_center(t);
-        lv_refr_now(NULL);
+        scan_begin("Scanning the library...", true);
         playback_stop();
         player.state = 0;
         player.album = -1;
@@ -5235,7 +5329,7 @@ static void settings_choose(int r)
         collect_artists();
         playlists_scan();
         fav_reload();
-        lv_obj_delete(t);
+        scan_end();
         show();
         if (library_skipped()) {          /* what it couldn't add, at once */
             skipped_seen = skipped_signature();
@@ -6398,7 +6492,9 @@ void los_app_start(lv_display_t *display, lv_indev_t *keypad)
     }
     test_result_save();
     startlog_mark("app: fonts loaded, install check");
+    scan_begin("Reading your music...", false);
     int albums = library_scan(los_music_path());
+    scan_end();
     startlog_mark("app: library read (%d albums)", albums);
     skipped_seen = skipped_signature();   /* known already: the Music list has it */
     collect_artists();

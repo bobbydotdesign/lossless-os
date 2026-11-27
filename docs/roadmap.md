@@ -59,16 +59,20 @@ H2 before the next. 0.9, the first public release, is out.
   24)
 - Published: a fresh public repository, releases built on GitHub
 
+## Done since 0.9 (in the next release)
+
+- A card with no music says so ("No music yet. Copy albums to the card
+  from your computer.") instead of empty lists; a card with only music it
+  can't play points to Couldn't add
+- Reading the library shows the mark and the albums so far instead of a
+  black screen, when it takes a moment (the first start, a big card)
+
 ## Version 1 (left)
 
 1. Our own USB IDs from pid.codes, in place of the test ID (asked for,
    waiting on their review)
-2. A card with no music says so ("No music yet. Copy albums to the Music
-   folder from your computer.") instead of an empty Albums screen
-3. The first library scan shows that it's working instead of a black
-   screen
-4. USB DAC tested with Windows and Linux
-5. More H2 versions: V1.9 to V2.2, and the AIGO Eros Q and Surfans F20,
+2. USB DAC tested with Windows and Linux
+3. More H2 versions: V1.9 to V2.2, and the AIGO Eros Q and Surfans F20,
    once their makers' firmware files are checked for the way back
 
 ## After version 1

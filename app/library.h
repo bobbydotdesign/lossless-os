@@ -46,6 +46,8 @@ int library_disc_folder(const char *name);
 int library_scan(const char *root);
 /* The same, reading every file again (for changed tags) */
 int library_rescan(const char *root);
+/* Told the albums so far as a scan goes (NULL: no one), to show it's working */
+void library_set_progress(void (*fn)(int albums));
 
 int library_albums(void);
 const los_album *library_album(int i);
